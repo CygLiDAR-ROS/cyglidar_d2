@@ -1,8 +1,8 @@
 # The New 'CygLiDAR D2' Released
-Frame Rate more improvement than D1 by **20 FPS**
-Implement the **Amplitude Image** data
-New 3D Data Filtering Added **(Kalman / Median / Average / Edge Filtering)**
-Each Measurement(2D/3D) payload data provide **TimeStamp/Temperature**
+* Frame Rate more improvement than D1 by **20 FPS**<br>
+* Implement the **Amplitude Image** data<br>
+* New 3D Data Filtering Added **(Kalman / Median / Average / Edge Filtering)** <br>
+* Each Measurement(2D/3D) payload data provide **TimeStamp/Temperature**<br>
 
 # cyglidar_d2(ROS2)
 cyglidar_d2 is a ROS package, which is designed to visualize 2D/3D distance dataset in real-time.
