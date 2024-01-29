@@ -75,15 +75,16 @@ sudo chmod 777 /dev/ttyUSB0
 
 #### Depth Image / Amplitude Image
 From CygLiDAR D2, Provide Amplitude Data as well as Depth Data
-* Depth Image
+* Camera Image
 <h1 align="left">
-  <img src="screenshots/Depth_None_Filtering.png" width="600"/>
+  <img src="screenshots/camera_image.jpg" width="400"/>
 </h1>
 
-* Amplitude Image
-<h1 align="left">
-  <img src="screenshots/Amp_Raw.png" width="600"/>
-</h1>
+![Depth Image](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Depth_None_Filtering.png) |![Amplitude Image](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Amp_Raw.png)
+--- | --- |
+* (Left) Depth Image \/ (Right) Amplitude Image
+<br>
+<br>
 
 #### None / Median / Average / Edge Filter
 * None Filtering Depth Image
