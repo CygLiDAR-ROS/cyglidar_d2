@@ -1,6 +1,6 @@
 #include "Topic2D.h"
 
-void Topic2D::initPublisher(rclcpp::Publisher<LaserScan>::SharedPtr _publisher_laserscan, rclcpp::Publisher<PointCloud2>::SharedPtr _publisher_point_2d)
+void Topic2D::initPublisher(ros::Publisher _publisher_laserscan, ros::Publisher _publisher_point_2d)
 {
     publisher_laserscan = _publisher_laserscan;
     publisher_point_2d  = _publisher_point_2d;
@@ -40,7 +40,7 @@ void Topic2D::applyPointCloud2D(uint16_t* _distance_buffer_2d)
 
 void Topic2D::assignPCL2D(const std::string &_frame_id)
 {
-    message_point_cloud_2d = std::make_shared<PointCloud2>();
+    message_point_cloud_2d = std::make_shared<sensor_msgs::PointCloud2>();
     pcl_2d.reset(new pcl_XYZRGBA());
 
     pcl_2d->header.frame_id = _frame_id;
@@ -48,12 +48,12 @@ void Topic2D::assignPCL2D(const std::string &_frame_id)
     pcl_2d->points.resize(DATA_LENGTH_2D);
 }
 
-void Topic2D::publishPoint2D(rclcpp::Time _start_time)
+void Topic2D::publishPoint2D(ros::Time _start_time)
 {
     pcl_conversions::toPCL(_start_time, pcl_2d->header.stamp);
 
     pcl::toROSMsg(*pcl_2d, *message_point_cloud_2d); //change type from pointcloud(pcl) to ROS message(PointCloud2)
-    publisher_point_2d->publish(*message_point_cloud_2d);
+    publisher_point_2d.publish(*message_point_cloud_2d);
 }
 
 void Topic2D::assignLaserScan(const std::string &_frame_id)
@@ -71,7 +71,7 @@ void Topic2D::assignLaserScan(const std::string &_frame_id)
     message_laserscan->intensities.resize(DATA_LENGTH_2D);
 }
 
-void Topic2D::publishScanLaser(rclcpp::Time _start_time, uint16_t* _distance_buffer_2d)
+void Topic2D::publishScanLaser(ros::Time _start_time, uint16_t* _distance_buffer_2d)
 {
     message_laserscan->header.stamp = _start_time;
 
@@ -90,6 +90,6 @@ void Topic2D::publishScanLaser(rclcpp::Time _start_time, uint16_t* _distance_buf
         }
     }
 
-    publisher_laserscan->publish(*message_laserscan);
+    publisher_laserscan.publish(*message_laserscan);
 }
 

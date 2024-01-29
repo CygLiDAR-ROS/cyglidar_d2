@@ -1,7 +1,8 @@
 #pragma once
 
-#include <chrono>
-#include <rclcpp/rclcpp.hpp>
+#include <thread>
+#include <future>
+#include <ros/ros.h>
 
 #include "CYG_SerialUart.h"
 #include "CYG_Driver.h"
@@ -10,9 +11,7 @@
 #include "Topic2D.h"
 #include "Topic3D.h"
 
-using namespace std::chrono_literals;
-
-class D2_Node : public rclcpp::Node
+class D2_Node
 {
     public:
         explicit D2_Node();
@@ -25,8 +24,8 @@ class D2_Node : public rclcpp::Node
     private:
         struct received_data_buffer
         {
-            rclcpp::Time parsing_start_time;
-            rclcpp::Time parsing_end_time;
+            ros::Time parsing_start_time;
+            ros::Time parsing_end_time;
             uint8_t* packet_data;
         }received_buffer[2];
 
@@ -43,24 +42,25 @@ class D2_Node : public rclcpp::Node
         CYG_SerialUart* serial_port;
         CYG_Driver*     cyg_driver;
 
-        rclcpp::Time start_time_scan_2d;
-        rclcpp::Time start_time_scan_3d;
-
         std::string port_number;
-        uint8_t     baud_rate_mode;
+        int         baud_rate_mode;
         std::string frame_id;
-        uint8_t     run_mode;
-        uint8_t     data_type_3d;
-        uint8_t     duration_mode;
-        uint16_t    duration_value;
-        uint8_t     frequency_channel;
-        uint8_t     color_mode;
-        uint8_t     filter_mode;
-        uint16_t    edge_filter_value;
+        int         run_mode;
+        int         data_type_3d;
+        int         duration_mode;
+        int         duration_value;
+        int         frequency_channel;
+        int         color_mode;
+        int         filter_mode;
+        int         edge_filter_value;
         bool        enable_kalmanfilter;
         bool        enable_clahe;
-        uint8_t     clahe_cliplimit;
-        uint8_t     clahe_tiles_grid_size;
+        int         clahe_cliplimit;
+        int         clahe_tiles_grid_size;
+
+        ros::NodeHandle nh;
+        ros::Time start_time_scan_2d;
+        ros::Time start_time_scan_3d;
 
         std::thread double_buffer_thread;
         std::thread publish_thread;
@@ -71,7 +71,7 @@ class D2_Node : public rclcpp::Node
 
         std::string mode_notice;
         bool info_flag = false;
-        
+
         uint8_t packet_structure[D2_Const::SCAN_MAX_SIZE];
         uint8_t first_total_packet_data[D2_Const::SCAN_MAX_SIZE];
         uint8_t second_total_packet_data[D2_Const::SCAN_MAX_SIZE];

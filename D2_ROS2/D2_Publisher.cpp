@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv)
 {
-    rclcpp::init(argc, argv);
+    ros::init(argc, argv, "D2_NODE");
 
     std::shared_ptr<D2_Node> d2_node = std::make_shared<D2_Node>();
 
@@ -10,17 +10,17 @@ int main(int argc, char **argv)
     {
         d2_node->connectBoostSerial();
 
-        while(rclcpp::ok())
+        while(ros::ok())
         {
             d2_node->loopCygParser();
         }
 
         d2_node->disconnectBoostSerial();
     }
-    catch (const rclcpp::exceptions::RCLError &e)
+    catch (const ros::Exception &e)
     {
-        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "[D1 NODE ERROR] : %s", e.what());
+        ROS_ERROR("[D1 NODE ERROR] : %s", e.what());
     }
 
-    rclcpp::shutdown();
+    ros::shutdown();
 }

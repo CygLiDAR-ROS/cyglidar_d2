@@ -1,37 +1,36 @@
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/laser_scan.hpp>
-#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <ros/ros.h>
+#include <sensor_msgs/LaserScan.h>
+#include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl_ros/point_cloud.h>
 
 #include "CYG_Constant.h"
 #include "CYG_Driver.h"
 
-using LaserScan = sensor_msgs::msg::LaserScan;
-using PointCloud2 = sensor_msgs::msg::PointCloud2;
 using pcl_XYZRGBA = pcl::PointCloud<pcl::PointXYZRGBA>;
 
 class Topic2D
 {
     public:
-        void initPublisher(rclcpp::Publisher<LaserScan>::SharedPtr _publisher_laserscan, rclcpp::Publisher<PointCloud2>::SharedPtr _publisher_point_2d);
+        void initPublisher(ros::Publisher _publisher_laserscan, ros::Publisher _publisher_point_2d);
 
         void applyPointCloud2D(uint16_t* _distance_buffer_2d);
 
         void assignPCL2D(const std::string &_frame_id);
-        void publishPoint2D(rclcpp::Time _start_time);
+        void publishPoint2D(ros::Time _start_time);
 
         void assignLaserScan(const std::string &_frame_id);
-        void publishScanLaser(rclcpp::Time _start_time, uint16_t* _distance_buffer_2d);
+        void publishScanLaser(ros::Time _start_time, uint16_t* _distance_buffer_2d);
 
     private:
-        rclcpp::Publisher<LaserScan>::SharedPtr   publisher_laserscan;
-        rclcpp::Publisher<PointCloud2>::SharedPtr publisher_point_2d;
+        ros::Publisher publisher_laserscan;
+        ros::Publisher publisher_point_2d;
 
-        std::shared_ptr<LaserScan>   message_laserscan;
-        std::shared_ptr<PointCloud2> message_point_cloud_2d;
-        std::shared_ptr<pcl_XYZRGBA> pcl_2d;
+        std::shared_ptr<sensor_msgs::LaserScan>   message_laserscan;
+        std::shared_ptr<sensor_msgs::PointCloud2> message_point_cloud_2d;
+        std::shared_ptr<pcl_XYZRGBA>              pcl_2d;
 
         uint8_t buffer_index;
         uint16_t raw_distance;

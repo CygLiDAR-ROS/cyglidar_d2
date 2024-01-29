@@ -4,11 +4,11 @@ Topic3D::Topic3D()
 {
     cyg_pcl    = new CYG_PCL();
     cyg_opencv = new CYG_OpenCV();
-    message_point_cloud_3d = std::make_shared<PointCloud2>();
-    message_image 		   = std::make_shared<Image>();
+    message_point_cloud_3d = std::make_shared<sensor_msgs::PointCloud2>();
+    message_image          = std::make_shared<sensor_msgs::Image>();
 }
 
-Topic3D::~Topic3D() 
+Topic3D::~Topic3D()
 {
 	delete cyg_pcl;
 	delete cyg_opencv;
@@ -17,7 +17,7 @@ Topic3D::~Topic3D()
 	cyg_opencv = nullptr;
 }
 
-void Topic3D::initPublisher(rclcpp::Publisher<Image>::SharedPtr _publisher_image, rclcpp::Publisher<PointCloud2>::SharedPtr _publisher_point_3d)
+void Topic3D::initPublisher(ros::Publisher _publisher_image, ros::Publisher _publisher_point_3d)
 {
     publisher_image    = _publisher_image;
     publisher_point_3d = _publisher_point_3d;
@@ -45,16 +45,16 @@ void Topic3D::assignImage(const std::string& _frame_id)
     message_image->data.resize(message_image->height * message_image->step);
 }
 
-void Topic3D::publishDepthFlatImage(rclcpp::Time _scan_start_time, uint16_t* _distance_buffer_3d)
+void Topic3D::publishDepthFlatImage(ros::Time _scan_start_time, uint16_t* _distance_buffer_3d)
 {
     message_image->header.stamp = _scan_start_time;
 
 	memcpy(message_image->data.data(), cyg_opencv->applyDepthFlatImage(_distance_buffer_3d).data, message_image->height * message_image->width * sizeof(uint32_t));
 
-    publisher_image->publish(*message_image);
+    publisher_image.publish(*message_image);
 }
 
-void Topic3D::publishAmplitudeFlatImage(rclcpp::Time _scan_start_time, uint16_t* _distance_buffer_3d)
+void Topic3D::publishAmplitudeFlatImage(ros::Time _scan_start_time, uint16_t* _distance_buffer_3d)
 {
     message_image->header.stamp = _scan_start_time;
 
@@ -69,20 +69,20 @@ void Topic3D::publishAmplitudeFlatImage(rclcpp::Time _scan_start_time, uint16_t*
 		memcpy(message_image->data.data(), processed_image.data, message_image->height * message_image->width * sizeof(uint32_t));
 	}
 
-    publisher_image->publish(*message_image);
+    publisher_image.publish(*message_image);
 }
 
-void Topic3D::publishDepthPointCloud3D(rclcpp::Time _scan_start_time, uint16_t* _distance_buffer_3d)
+void Topic3D::publishDepthPointCloud3D(ros::Time _scan_start_time, uint16_t* _distance_buffer_3d)
 {
     pcl_conversions::toPCL(_scan_start_time, pcl_3d->header.stamp);
 
     cyg_pcl->applyPointCloud3DColors(pcl_3d, _distance_buffer_3d);
 
     pcl::toROSMsg(*pcl_3d, *message_point_cloud_3d); //change type from pointcloud(pcl) to ROS message(PointCloud2)
-    publisher_point_3d->publish(*message_point_cloud_3d);
+    publisher_point_3d.publish(*message_point_cloud_3d);
 }
 
-void Topic3D::publishAmplitudePointCloud3D(rclcpp::Time _scan_start_time, uint16_t* _distance_buffer_3d)
+void Topic3D::publishAmplitudePointCloud3D(ros::Time _scan_start_time, uint16_t* _distance_buffer_3d)
 {
     pcl_conversions::toPCL(_scan_start_time, pcl_3d->header.stamp);
 
@@ -96,7 +96,7 @@ void Topic3D::publishAmplitudePointCloud3D(rclcpp::Time _scan_start_time, uint16
 	}
 
     pcl::toROSMsg(*pcl_3d, *message_point_cloud_3d);
-    publisher_point_3d->publish(*message_point_cloud_3d);
+    publisher_point_3d.publish(*message_point_cloud_3d);
 }
 
 void Topic3D::updateColorConfig(uint8_t _color_mode, std::string& _notice)
@@ -126,7 +126,7 @@ void Topic3D::updateColorConfig(uint8_t _color_mode, std::string& _notice)
 void Topic3D::checkAmplitudeStatus(bool _enable_clahe, uint8_t clip_limit, uint8_t tiles_grid_size, uint8_t* _amplitude_data)
 {
 	enable_clahe = _enable_clahe;
-	// cyg_opencv->initAmplitudeMatrix(_amplitude_data);
+
 	for (uint16_t i = 0; i < D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT; i++)
     {
         cyg_opencv->matrix_raw_amplitude.at<uint8_t>(0, i) = _amplitude_data[i];

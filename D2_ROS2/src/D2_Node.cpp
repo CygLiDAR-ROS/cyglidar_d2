@@ -1,17 +1,17 @@
 #include "D2_Node.h"
 
-D2_Node::D2_Node() : Node("D2_NODE")
+D2_Node::D2_Node()
 {
     topic_2d    = new Topic2D();
     topic_3d    = new Topic3D();
     cyg_driver  = new CYG_Driver();
     serial_port = new CYG_SerialUart();
 
-    topic_2d->initPublisher(this->create_publisher<sensor_msgs::msg::LaserScan>  ("scan",    10),
-                            this->create_publisher<sensor_msgs::msg::PointCloud2>("scan_2D", 10));
+    topic_2d->initPublisher(nh.advertise<sensor_msgs::LaserScan>  ("scan",       10),
+                            nh.advertise<sensor_msgs::PointCloud2>("scan_2D",    10));
 
-    topic_3d->initPublisher(this->create_publisher<sensor_msgs::msg::Image>      ("scan_image", 10),
-                            this->create_publisher<sensor_msgs::msg::PointCloud2>("scan_3D",    10));
+    topic_3d->initPublisher(nh.advertise<sensor_msgs::Image>      ("scan_image", 10),
+                            nh.advertise<sensor_msgs::PointCloud2>("scan_3D",    10));
 
     received_buffer[0].packet_data = first_total_packet_data;
     received_buffer[1].packet_data = second_total_packet_data;
@@ -52,14 +52,14 @@ void D2_Node::connectBoostSerial()
     }
     catch (const boost::system::system_error& ex)
     {
-        RCLCPP_ERROR(this->get_logger(), "[BOOST SERIAL ERROR] %s", ex.what());
+        ROS_ERROR("[BOOST SERIAL ERROR] %s", ex.what());
     }
 }
 
 void D2_Node::disconnectBoostSerial()
 {
     serial_port->closeSerialPort();
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] STOP");
+    ROS_ERROR("[PACKET REQUEST] STOP");
 }
 
 void D2_Node::loopCygParser()
@@ -72,7 +72,7 @@ void D2_Node::loopCygParser()
 
         if(parser_return == D2_Const::CHECKSUM_PASSED)
         {
-            received_buffer[double_buffer_index].parsing_end_time = this->now();
+            received_buffer[double_buffer_index].parsing_end_time = ros::Time::now();
 
             publish_done_flag |= (1 << double_buffer_index);
 
@@ -81,28 +81,29 @@ void D2_Node::loopCygParser()
         }
         else if (parser_return == D2_Const::PARSING_STARTED)
         {
-            received_buffer[double_buffer_index].parsing_start_time = this->now();
+            received_buffer[double_buffer_index].parsing_start_time = ros::Time::now();
         }
     }
 }
 
 void D2_Node::initConfiguration()
 {
-    port_number           = this->declare_parameter("port_number",           "/dev/ttyUSB0");
-    baud_rate_mode        = this->declare_parameter("baud_rate",             0);
-    frame_id              = this->declare_parameter("frame_id",              "laser_frame");
-    run_mode              = this->declare_parameter("run_mode",              ROS_Const::MODE_DUAL);
-    data_type_3d          = this->declare_parameter("data_type_3d",          ROS_Const::MODE_DISTANCE);
-    duration_mode         = this->declare_parameter("duration_mode",         ROS_Const::PULSE_AUTO);
-    duration_value        = this->declare_parameter("duration_value",        10000);
-    frequency_channel     = this->declare_parameter("frequency_channel",     0);
-    color_mode            = this->declare_parameter("color_mode",            ROS_Const::MODE_HUE);
-    filter_mode           = this->declare_parameter("filter_mode",           ROS_Const::NONE_FILTER);
-    edge_filter_value     = this->declare_parameter("edge_filter_value",     0);
-    enable_kalmanfilter   = this->declare_parameter("enable_kalmanfilter",   false);
-    enable_clahe          = this->declare_parameter("enable_clahe",          false);
-    clahe_cliplimit       = this->declare_parameter("clahe_cliplimit",       40);
-    clahe_tiles_grid_size = this->declare_parameter("clahe_tiles_grid_size", 8);
+    ros::NodeHandle priv_nh("~");
+
+    priv_nh.param<std::string>("port_number",           port_number,           "/dev/ttyUSB0");
+    priv_nh.param<int>        ("baud_rate",             baud_rate_mode,        0);
+    priv_nh.param<std::string>("frame_id",              frame_id,              "laser_frame");
+    priv_nh.param<int>        ("run_mode",              run_mode,              ROS_Const::MODE_DUAL);
+    priv_nh.param<int>        ("data_type_3d",          data_type_3d,          ROS_Const::MODE_DISTANCE);
+    priv_nh.param<int>        ("duration_mode",         duration_mode,         ROS_Const::PULSE_AUTO);
+    priv_nh.param<int>        ("duration_value",        duration_value,        10000);
+    priv_nh.param<int>        ("frequency_channel",     frequency_channel,     0);
+    priv_nh.param<int>        ("color_mode",            color_mode,            ROS_Const::MODE_HUE);
+    priv_nh.param<int>        ("filter_mode",           filter_mode,           ROS_Const::NONE_FILTER);
+    priv_nh.param<bool>       ("enable_kalmanfilter",   enable_kalmanfilter,   true);
+    priv_nh.param<bool>       ("enable_clahe",          enable_clahe,          true);
+    priv_nh.param<int>        ("clahe_cliplimit",       clahe_cliplimit,       40);
+    priv_nh.param<int>        ("clahe_tiles_grid_size", clahe_tiles_grid_size, 8);
 
     topic_2d->assignLaserScan(frame_id);
     topic_2d->assignPCL2D(frame_id);
@@ -115,54 +116,54 @@ void D2_Node::initConfiguration()
 void D2_Node::requestPacketData()
 {
     serial_port->requestDeviceInfo();
-    std::this_thread::sleep_for(3s);
+    ros::Duration(3.0).sleep();
     // sleep for 3s, by requsting the info data.
 
-    RCLCPP_INFO(this->get_logger(), "[COLOR MODE] %s", mode_notice.c_str());
+    ROS_INFO("[COLOR MODE] %s", mode_notice.c_str());
 
     if (enable_kalmanfilter)
     {
-        RCLCPP_INFO(this->get_logger(), "[KALMAN FILTER] APPLIED");
+        ROS_INFO("[KALMAN FILTER] APPLIED");
     }
     else
     {
-        RCLCPP_INFO(this->get_logger(), "[KALMAN FILTER] NONE APPLIED");
+        ROS_INFO("[KALMAN FILTER] NONE APPLIED");
     }
 
     serial_port->requestSwitch3DType(data_type_3d, mode_notice);
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
+    ROS_INFO("[PACKET REQUEST] %s", mode_notice.c_str());
 
     serial_port->requestNewFiltering(run_mode, filter_mode, mode_notice);
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
+    ROS_INFO("[PACKET REQUEST] %s", mode_notice.c_str());
 
     serial_port->requestEdgeFiltering(run_mode, edge_filter_value);
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] EDGE FILTERING : %d", edge_filter_value);
+    ROS_INFO("[PACKET REQUEST] EDGE FILTERING : %d", edge_filter_value);
 
     serial_port->requestRunMode(run_mode, mode_notice);
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
+    ROS_INFO("[PACKET REQUEST] %s", mode_notice.c_str());
 
     serial_port->requestDurationControl(run_mode, duration_mode, duration_value);
-    std::this_thread::sleep_for(1s);
-    // sleep for a sec, by the duration
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] PULSE DURATION : %d", duration_value);
+    ros::Duration(1.0).sleep();
+    ROS_INFO("[PACKET REQUEST] PULSE DURATION : %d", duration_value);
+    // sleep for a sec, by requsting the duration
 
     serial_port->requestFrequencyChannel(frequency_channel);
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] FREQUENCY CH.%d", frequency_channel);
+    ROS_INFO("[PACKET REQUEST] FREQUENCY CH.%d", frequency_channel);
 
 }
 
 void D2_Node::convertData(received_data_buffer* _received_buffer)
 {
-    rclcpp::Duration time_for_scanning(_received_buffer->parsing_end_time - _received_buffer->parsing_start_time);
+    ros::Duration time_for_scanning(_received_buffer->parsing_end_time - _received_buffer->parsing_start_time);
 
     if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_2D)
     {
         cyg_driver->getDistanceArray2D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_2d);
 
-        rclcpp::Duration timestamp_nanosec_mode_2d(0, cyg_driver->setTimeStamp2D() * 1000);
-        rclcpp::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_2d);
+        ros::Duration timestamp_nanosec_mode_2d(0, cyg_driver->setTimeStamp2D() * 1000);
+        ros::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_2d);
 
-        start_time_scan_2d = this->now() - timestamp_scan_started;
+        start_time_scan_2d = ros::Time::now() - timestamp_scan_started;
 
         publish_data_state = ROS_Const::PUBLISH_2D;
     }
@@ -170,10 +171,10 @@ void D2_Node::convertData(received_data_buffer* _received_buffer)
     {
         cyg_driver->getDistanceArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, enable_kalmanfilter);
 
-        rclcpp::Duration timestamp_nanosec_mode_3d(0, cyg_driver->setTimeStamp3D() * 1000);
-        rclcpp::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
+        ros::Duration timestamp_nanosec_mode_3d(0, cyg_driver->setTimeStamp3D() * 1000);
+        ros::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
 
-        start_time_scan_3d = this->now() - timestamp_scan_started;
+        start_time_scan_3d = ros::Time::now() - timestamp_scan_started;
 
         publish_data_state = ROS_Const::PUBLISH_3D;
     }
@@ -181,17 +182,17 @@ void D2_Node::convertData(received_data_buffer* _received_buffer)
     {
         cyg_driver->getDistanceAndAmpliutdeArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, amplitude_buffer_3d, enable_kalmanfilter);
 
-        rclcpp::Duration timestamp_nanosec_mode_3d(0, cyg_driver->setTimeStamp3D() * 1000);
-        rclcpp::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
+        ros::Duration timestamp_nanosec_mode_3d(0, cyg_driver->setTimeStamp3D() * 1000);
+        ros::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
 
-        start_time_scan_3d = this->now() - timestamp_scan_started;
+        start_time_scan_3d = ros::Time::now() - timestamp_scan_started;
 
         publish_data_state = ROS_Const::PUBLISH_3D;
     }
     else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_DEVICE_INFO && info_flag == false)
     {
-        RCLCPP_INFO(this->get_logger(), "[F/W VERSION] %d.%d.%d", _received_buffer->packet_data[6], _received_buffer->packet_data[7],  _received_buffer->packet_data[8]);
-        RCLCPP_INFO(this->get_logger(), "[H/W VERSION] %d.%d.%d", _received_buffer->packet_data[9], _received_buffer->packet_data[10], _received_buffer->packet_data[11]);
+        ROS_INFO("[F/W VERSION] %d.%d.%d", _received_buffer->packet_data[6], _received_buffer->packet_data[7],  _received_buffer->packet_data[8]);
+        ROS_INFO("[H/W VERSION] %d.%d.%d", _received_buffer->packet_data[9], _received_buffer->packet_data[10], _received_buffer->packet_data[11]);
         info_flag = true;
     }
 }
@@ -244,7 +245,7 @@ void D2_Node::doublebufferThread()
     do
     {
         processDoubleBuffer();
-        status = future.wait_for(0s);
+        status = future.wait_for(std::chrono::seconds(0));
     } while (status == std::future_status::timeout);
 }
 
@@ -253,6 +254,6 @@ void D2_Node::publishThread()
     do
     {
         runPublish();
-        status = future.wait_for(0s);
+        status = future.wait_for(std::chrono::seconds(0));
     } while (status == std::future_status::timeout);
 }
