@@ -8,7 +8,7 @@
 * New 3D Data Filtering Added **(Kalman / Median / Average / Edge Filtering)** <br>
 * Each Measurement(2D/3D) payload data provide **TimeStamp/Temperature**<br>
 
-# cyglidar_d2(ROS2)
+# cyglidar_d2(ROS1)
 cyglidar_d2 is a ROS package, which is designed to visualize 2D/3D distance dataset in real-time.
 
 For more details in CygLiDAR, please visit http://www.cygbot.com
@@ -19,10 +19,10 @@ For more details in CygLiDAR, please visit http://www.cygbot.com
 ```bash
 mkdir -p ~/d2_ws/src/
 cd ~/d2_ws/src/
-git clone https://github.com/CygLiDAR-ROS/cyglidar_d2.git
+git clone -b ROS1 https://github.com/CygLiDAR-ROS/cyglidar_d2.git
 cd ..
-colcon build --symlink-install
-source install/setup.bash
+catkin_make -j4
+source devel/setup.bash
 ```
 
 * When CMake Error Occured as below
@@ -36,15 +36,15 @@ sudo apt install ros-${ROS2 Distro}-pcl-conversions
 ### Installation Udev
 Install the udev rule
 ```bash
-cd ~/cyglidar_ws/src/cyglidar_d1/scripts
+cd ~/d2_ws/src/cyglidar_d1/scripts
 chmod +x create_udev_rules.sh
 ./create_udev_rules.sh
 ```
 
 ### Run cyglidar_d2_publisher and View in the Rviz
 ```bash
-ros2 launch cyglidar_d1_ros2 cyglidar.launch.py
-ros2 launch cyglidar_d1_ros2 view_cyglidar.launch.py  (Run with Rviz)
+roslaunch cyglidar_d1_ros2 cyglidar.launch.py
+roslaunch cyglidar_d1_ros2 view_cyglidar.launch.py  (Run with Rviz)
 ```
 
 #1 When CyglidarNode Error Occured
