@@ -80,9 +80,10 @@ From CygLiDAR D2, Provide Amplitude Data as well as Depth Data
   <img src="screenshots/camera_image.jpg" width="400"/>
 </h1>
 
+* (Left) Depth Image \/ (Right) Amplitude Image
+
 ![Depth Image](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Depth_None_Filtering.png) |![Amplitude Image](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Amp_Raw.png)
 --- | --- |
-* (Left) Depth Image \/ (Right) Amplitude Image
 <br>
 <br>
 
