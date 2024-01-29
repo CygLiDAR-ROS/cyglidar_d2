@@ -1,4 +1,8 @@
 # The New 'CygLiDAR D2' Released
+<h1 align="left">
+  <img src="screenshots/D2_IMAGE.png" width="200"/>
+</h1>
+
 * Frame Rate more improvement than D1 by **20 FPS**<br>
 * Implement the **Amplitude Image** data<br>
 * New 3D Data Filtering Added **(Kalman / Median / Average / Edge Filtering)** <br>
