@@ -100,5 +100,6 @@ From CygLiDAR D2, Provide Amplitude Data as well as Depth Data
 #### Raw Amplitude Image & CLAHE applied Amplitude Image
 In case of grayscale, CALHE(Contrast Limited Adaptive Histogram Equalization) algorithm can be used to improve image contrast.
 
-![Raw Ampliutde](https://github.com Amp_Raw.png?raw=true) | ![CLAHE Applied Amplitude](https://github.com Amp_CLAHE_applied.png?raw=true)
-
+![Raw Amplitude](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Amp_Raw.png) |![CLAHE Applied Ampliutde](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Amp_CLAHE_applied.png)
+--- | --- | 
+* (Left) Raw Amplitude Image \/ (Right) CLAHE Applied Amplitude Image(clip limit \: 40, tile grid size \: 8)
