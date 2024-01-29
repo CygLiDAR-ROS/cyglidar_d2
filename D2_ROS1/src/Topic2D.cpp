@@ -58,7 +58,7 @@ void Topic2D::publishPoint2D(ros::Time _start_time)
 
 void Topic2D::assignLaserScan(const std::string &_frame_id)
 {
-    message_laserscan = std::make_shared<LaserScan>();
+    message_laserscan = std::make_shared<sensor_msgs::LaserScan>();
 
     message_laserscan->header.frame_id = _frame_id;
     message_laserscan->angle_min       = -D2_Const::HORIZONTAL_ANGLE / 2.0f * ROS_Const::DEGREE2RADIAN;
