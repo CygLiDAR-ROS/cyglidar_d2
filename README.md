@@ -15,7 +15,7 @@ For more details in CygLiDAR, please visit http://www.cygbot.com
 ```bash
 mkdir -p ~/d2_ws/src/
 cd ~/d2_ws/src/
-git clone -b ROS2 https://github.com/CygLiDAR-ROS/cyglidar_d2.git
+git clone https://github.com/CygLiDAR-ROS/cyglidar_d2.git
 cd ..
 colcon build --symlink-install
 source install/setup.bash
