@@ -3,7 +3,7 @@
 #include <memory>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <opencv4/opencv2/core/mat.hpp>
+#include <opencv2/core/mat.hpp>
 
 #include "CYG_Constant.h"
 #include "CYG_Distortion.h"
