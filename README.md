@@ -36,7 +36,7 @@ sudo apt install ros-${ROS2 Distro}-pcl-conversions
 ### Installation Udev
 Install the udev rule
 ```bash
-cd ~/cyglidar_ws/src/cyglidar_d1/scripts
+cd ~/d2_ws/src/cyglidar_d1/scripts
 chmod +x create_udev_rules.sh
 ./create_udev_rules.sh
 ```
