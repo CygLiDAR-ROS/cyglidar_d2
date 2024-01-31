@@ -82,7 +82,7 @@ namespace D2_Const
 	const uint16_t INTERFERENCE_2D  = 16007;
 	const uint16_t EDGE_FILTERED_2D = 16008;
 
-	//---> CygLiDAR D1's PACKET COMMAND
+	//---> CygLiDAR D2's PACKET COMMAND
 	const uint8_t NORMAL_MODE  = 0x5A;
 	const uint8_t PRODUCT_CODE = 0x77;
 	const uint8_t DEFAULT_ID   = 0xFF;
