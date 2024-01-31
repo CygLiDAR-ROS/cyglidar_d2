@@ -72,7 +72,6 @@ uint16_t CYG_KalmanFilter::runKalmanFiltering(uint16_t _index, uint16_t _raw_dat
 
 void CYG_KalmanFilter::clearKalmanBuffer()
 {
-    //memset(buffer, 0, buffer_size);
     for (uint16_t i = 0; i < D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT; i++)
     {
         kalman_buffer[i].x = 0.0;
