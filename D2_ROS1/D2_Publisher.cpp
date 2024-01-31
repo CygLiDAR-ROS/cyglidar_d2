@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     }
     catch (const ros::Exception &e)
     {
-        ROS_ERROR("[D1 NODE ERROR] : %s", e.what());
+        ROS_ERROR("[D2 NODE ERROR] : %s", e.what());
     }
 
     ros::shutdown();
