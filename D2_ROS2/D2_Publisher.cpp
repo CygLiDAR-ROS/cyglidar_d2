@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     }
     catch (const rclcpp::exceptions::RCLError &e)
     {
-        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "[D1 NODE ERROR] : %s", e.what());
+        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "[D2 NODE ERROR] : %s", e.what());
     }
 
     rclcpp::shutdown();
