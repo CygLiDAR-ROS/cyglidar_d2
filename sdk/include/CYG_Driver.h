@@ -60,10 +60,9 @@ class CYG_Driver
 
 		uint16_t payload_count;
 		uint16_t payload_size;
-        uint16_t timestamp_mode_2d;
-        uint16_t temperature_mode_2d;
         uint16_t data1, data2;
+        uint16_t timestamp_mode_2d;
         uint16_t timestamp_mode_3d;
-        uint16_t temperature_mode_3d;
-
+        int16_t temperature_mode_2d;
+        int16_t temperature_mode_3d;
 };
