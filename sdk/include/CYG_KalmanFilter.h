@@ -22,7 +22,7 @@ class CYG_KalmanFilter
     private:
         void initKalmanFilter();
         void reinitKalmanFilter(uint16_t _index, uint16_t _raw_data);
-        uint16_t runKalmanFiltering(uint16_t _buf_indexer_index, uint16_t _raw_data);
+        uint16_t runKalmanFiltering(uint16_t _index, uint16_t _raw_data);
         void clearKalmanBuffer();
 
         KalmanValues_t* kalman_buffer;
@@ -31,7 +31,7 @@ class CYG_KalmanFilter
         float A;
         float H;
         float Q;
-        float R; 
+        float R;
         float transpose_of_A;
         float transpose_of_H;
 
