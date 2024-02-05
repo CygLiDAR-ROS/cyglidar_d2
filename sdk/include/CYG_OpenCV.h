@@ -18,7 +18,7 @@ class CYG_OpenCV
         cv::Mat matrix_clahe_applied_amplitude = cv::Mat::zeros(1, D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT, CV_8UC1);
 
     private:
-        cv::Mat matrix_color = cv::Mat::zeros(1, D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT, CV_8UC4);
+        cv::Mat matrix_color = cv::Mat::zeros(D2_Const::IMAGE_HEIGHT, D2_Const::IMAGE_WIDTH, CV_8UC4);
         cv::Ptr<cv::CLAHE> clahe;
 
         std::vector<ColorCode_t> color_map;
