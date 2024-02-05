@@ -8,7 +8,7 @@ Topic3D::Topic3D()
     message_image 		   = std::make_shared<Image>();
 }
 
-Topic3D::~Topic3D() 
+Topic3D::~Topic3D()
 {
 	delete cyg_pcl;
 	delete cyg_opencv;
@@ -39,7 +39,7 @@ void Topic3D::assignImage(const std::string& _frame_id)
     message_image->header.frame_id = _frame_id;
     message_image->width           = D2_Const::IMAGE_WIDTH;
     message_image->height          = D2_Const::IMAGE_HEIGHT;
-    message_image->encoding        = sensor_msgs::image_encodings::RGBA8;
+    message_image->encoding        = sensor_msgs::image_encodings::BGRA8;
     message_image->step            = message_image->width * sizeof(uint32_t);
     message_image->is_bigendian    = false;
     message_image->data.resize(message_image->height * message_image->step);
