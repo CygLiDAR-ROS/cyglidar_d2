@@ -8,7 +8,7 @@ CYG_PCL::CYG_PCL()
                                       ROS_Const::OFFSET_CENTER_POINT_X, ROS_Const::OFFSET_CENTER_POINT_Y);
 }
 
-CYG_PCL::~CYG_PCL() 
+CYG_PCL::~CYG_PCL()
 {
     delete cyg_distortion;
     cyg_distortion = nullptr;
@@ -61,6 +61,9 @@ void CYG_PCL::applyAmplitudePointCloud(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, ui
         }
         else
         {
+            _pcl_3d->points[buffer_index].x = 0;
+            _pcl_3d->points[buffer_index].y = 0;
+            _pcl_3d->points[buffer_index].z = 0;
             _pcl_3d->points[buffer_index].a = 0;
         }
     }
