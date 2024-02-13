@@ -12,7 +12,7 @@ class CYG_OpenCV
         cv::Mat applyDepthFlatImage(uint16_t* _distance_buffer_3d);
         cv::Mat applyAmplitudeFlatImage(uint16_t* _distance_buffer_3d, cv::Mat& _amplitude_matrix);
 
-        void getColorMap(std::vector<ColorCode_t> &_color_map);
+        void getColorMap(std::vector<ColorCode_t>& _color_map);
 
         cv::Mat matrix_raw_amplitude = cv::Mat::zeros(1, D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT, CV_8UC1);
         cv::Mat matrix_clahe_applied_amplitude = cv::Mat::zeros(1, D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT, CV_8UC1);

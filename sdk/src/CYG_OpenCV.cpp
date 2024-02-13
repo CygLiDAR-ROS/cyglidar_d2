@@ -29,23 +29,23 @@ cv::Mat CYG_OpenCV::applyDepthFlatImage(uint16_t* _distance_buffer_3d)
             }
             else if (raw_distance == D2_Const::ADC_OVERFLOW_3D)
             {
-                matrix_color.at<cv::Vec4b>(y, x)[0] = ROS_Const::ADC_OVERFLOW_COLOR.R;
+                matrix_color.at<cv::Vec4b>(y, x)[0] = ROS_Const::ADC_OVERFLOW_COLOR.B;
                 matrix_color.at<cv::Vec4b>(y, x)[1] = ROS_Const::ADC_OVERFLOW_COLOR.G;
-                matrix_color.at<cv::Vec4b>(y, x)[2] = ROS_Const::ADC_OVERFLOW_COLOR.B;
+                matrix_color.at<cv::Vec4b>(y, x)[2] = ROS_Const::ADC_OVERFLOW_COLOR.R;
                 matrix_color.at<cv::Vec4b>(y, x)[3] = ROS_Const::ADC_OVERFLOW_COLOR.A;
             }
             else if (raw_distance == D2_Const::SATURATION_3D)
             {
-                matrix_color.at<cv::Vec4b>(y, x)[0] = ROS_Const::SATURATION_COLOR.R;
+                matrix_color.at<cv::Vec4b>(y, x)[0] = ROS_Const::SATURATION_COLOR.B;
                 matrix_color.at<cv::Vec4b>(y, x)[1] = ROS_Const::SATURATION_COLOR.G;
-                matrix_color.at<cv::Vec4b>(y, x)[2] = ROS_Const::SATURATION_COLOR.B;
+                matrix_color.at<cv::Vec4b>(y, x)[2] = ROS_Const::SATURATION_COLOR.R;
                 matrix_color.at<cv::Vec4b>(y, x)[3] = ROS_Const::SATURATION_COLOR.A;
             }
             else
             {
-                matrix_color.at<cv::Vec4b>(y, x)[0] = ROS_Const::NONE_COLOR.R;
+                matrix_color.at<cv::Vec4b>(y, x)[0] = ROS_Const::NONE_COLOR.B;
                 matrix_color.at<cv::Vec4b>(y, x)[1] = ROS_Const::NONE_COLOR.G;
-                matrix_color.at<cv::Vec4b>(y, x)[2] = ROS_Const::NONE_COLOR.B;
+                matrix_color.at<cv::Vec4b>(y, x)[2] = ROS_Const::NONE_COLOR.R;
                 matrix_color.at<cv::Vec4b>(y, x)[3] = ROS_Const::NONE_COLOR.A;
             }
         }

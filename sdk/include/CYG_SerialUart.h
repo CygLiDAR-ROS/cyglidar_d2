@@ -13,24 +13,24 @@ class CYG_SerialUart
         CYG_SerialUart();
         virtual ~CYG_SerialUart();
 
-        void openSerialPort(const std::string &_port, const uint8_t _baudrate);
+        void openSerialPort(const std::string& _port, const uint8_t _baudrate);
         void closeSerialPort();
 
         uint16_t getPacketLength(uint8_t* _received_buffer);
 
-        void requestRunMode(const uint8_t _run_mode, std::string &_notice);
-        void requestSwitch3DType(const uint8_t _3d_mode, std::string &_notice);
+        void requestRunMode(const uint8_t _run_mode, std::string& _notice);
+        void requestSwitch3DType(const uint8_t _3d_mode, std::string& _notice);
         void requestDurationControl(const uint8_t _run_mode, const uint8_t _duration_mode, uint16_t _duration_value);
         void requestFrequencyChannel(const uint8_t _channel_number);
         void requestDeviceInfo();
         void requestSerialBaudRate(const uint8_t _select_baud_rate);
-        void requestNewFiltering(const uint8_t _run_mode, const uint8_t _filter_mode, std::string &_notice);
+        void requestNewFiltering(const uint8_t _run_mode, const uint8_t _filter_mode, std::string& _notice);
         void requestEdgeFiltering(const uint8_t _run_mode, uint16_t _edge_filter_value);
 
         uint32_t getBaudRate(uint8_t _baud_rate_mode);
 
     private:
-        void transferPacketCommand(const std::vector<uint8_t> &payload);
+        void transferPacketCommand(const std::vector<uint8_t>& payload);
 
         std::shared_ptr<boost::asio::serial_port> serial_port;
         boost::asio::io_service   io_service;

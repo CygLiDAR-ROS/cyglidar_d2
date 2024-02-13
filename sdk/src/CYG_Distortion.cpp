@@ -66,7 +66,7 @@ void CYG_Distortion::initLensTransform(const float _sensor_point_size_mm, const 
 }
 
 void CYG_Distortion::transformPixel(uint16_t _buffer_index, uint16_t _source_origin_z,
-									float &_destination_x, float &_destination_y, float &_destination_z)
+									float& _destination_x, float& _destination_y, float& _destination_z)
 {
 	_destination_x = static_cast<float>(_source_origin_z) * table_x[_buffer_index];
 	_destination_y = static_cast<float>(_source_origin_z) * table_y[_buffer_index];

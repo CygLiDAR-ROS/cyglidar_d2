@@ -13,7 +13,7 @@ class CYG_Distortion
 							   const float _center_point_offset_x, const float _center_point_offset_y);
 
 		void transformPixel(uint16_t _buffer_index, uint16_t _source_origin_z,
-							float &_point_position_x, float &_point_position_y, float &_point_position_z);
+							float& _point_position_x, float& _point_position_y, float& _point_position_z);
 
 	private:
 		float interpolate(const float x_in, const float x0, const float y0, const float x1, const float y1);
