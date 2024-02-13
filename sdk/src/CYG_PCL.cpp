@@ -36,6 +36,9 @@ void CYG_PCL::applyPointCloud3DColors(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, uin
         }
         else
         {
+            _pcl_3d->points[buffer_index].x = 0;
+            _pcl_3d->points[buffer_index].y = 0;
+            _pcl_3d->points[buffer_index].z = 0;
             _pcl_3d->points[buffer_index].a = 0;
         }
     }
