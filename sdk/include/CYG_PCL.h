@@ -16,10 +16,10 @@ class CYG_PCL
         CYG_PCL();
         virtual ~CYG_PCL();
 
-        void applyPointCloud3DColors(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, uint16_t* _distance_buffer_3d);
-        void applyAmplitudePointCloud(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, uint16_t* _distance_buffer_3d, cv::Mat& _amplitude_matrix);
+        void applyPointCloud3DColors(std::shared_ptr<pcl_XYZRGBA>& _pcl_3d, uint16_t* _distance_buffer_3d);
+        void applyAmplitudePointCloud(std::shared_ptr<pcl_XYZRGBA>& _pcl_3d, uint16_t* _distance_buffer_3d, cv::Mat& _amplitude_matrix);
 
-        void getColorMap(std::vector<ColorCode_t> &_color_map);
+        void getColorMap(std::vector<ColorCode_t>& _color_map);
 
     private:
         CYG_Distortion* cyg_distortion;

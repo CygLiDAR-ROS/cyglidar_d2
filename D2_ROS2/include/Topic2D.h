@@ -19,10 +19,10 @@ class Topic2D
 
         void applyPointCloud2D(uint16_t* _distance_buffer_2d);
 
-        void assignPCL2D(const std::string &_frame_id);
+        void assignPCL2D(const std::string& _frame_id);
         void publishPoint2D(rclcpp::Time _start_time);
 
-        void assignLaserScan(const std::string &_frame_id);
+        void assignLaserScan(const std::string& _frame_id);
         void publishScanLaser(rclcpp::Time _start_time, uint16_t* _distance_buffer_2d);
 
     private:

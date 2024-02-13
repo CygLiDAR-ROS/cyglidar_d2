@@ -38,7 +38,7 @@ void Topic2D::applyPointCloud2D(uint16_t* _distance_buffer_2d)
     }
 }
 
-void Topic2D::assignPCL2D(const std::string &_frame_id)
+void Topic2D::assignPCL2D(const std::string& _frame_id)
 {
     message_point_cloud_2d = std::make_shared<PointCloud2>();
     pcl_2d.reset(new pcl_XYZRGBA());
@@ -56,7 +56,7 @@ void Topic2D::publishPoint2D(rclcpp::Time _start_time)
     publisher_point_2d->publish(*message_point_cloud_2d);
 }
 
-void Topic2D::assignLaserScan(const std::string &_frame_id)
+void Topic2D::assignLaserScan(const std::string& _frame_id)
 {
     message_laserscan = std::make_shared<LaserScan>();
 

@@ -14,7 +14,7 @@ CYG_PCL::~CYG_PCL()
     cyg_distortion = nullptr;
 }
 
-void CYG_PCL::applyPointCloud3DColors(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, uint16_t* _distance_buffer_3d)
+void CYG_PCL::applyPointCloud3DColors(std::shared_ptr<pcl_XYZRGBA>& _pcl_3d, uint16_t* _distance_buffer_3d)
 {
     for (buffer_index = 0; buffer_index < D2_Const::IMAGE_HEIGHT * D2_Const::IMAGE_WIDTH; buffer_index++)
     {
@@ -44,7 +44,7 @@ void CYG_PCL::applyPointCloud3DColors(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, uin
     }
 }
 
-void CYG_PCL::applyAmplitudePointCloud(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, uint16_t* _distance_buffer_3d, cv::Mat& _amplitude_matrix)
+void CYG_PCL::applyAmplitudePointCloud(std::shared_ptr<pcl_XYZRGBA>& _pcl_3d, uint16_t* _distance_buffer_3d, cv::Mat& _amplitude_matrix)
 {
     for (buffer_index = 0; buffer_index < D2_Const::IMAGE_HEIGHT * D2_Const::IMAGE_WIDTH; buffer_index++)
     {
@@ -72,7 +72,7 @@ void CYG_PCL::applyAmplitudePointCloud(std::shared_ptr<pcl_XYZRGBA> &_pcl_3d, ui
     }
 }
 
-void CYG_PCL::getColorMap(std::vector<ColorCode_t> &_color_map)
+void CYG_PCL::getColorMap(std::vector<ColorCode_t>& _color_map)
 {
     this->color_map = _color_map;
 

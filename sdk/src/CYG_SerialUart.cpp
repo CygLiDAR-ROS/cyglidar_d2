@@ -15,7 +15,7 @@ CYG_SerialUart::~CYG_SerialUart()
 	io_service.reset();
 }
 
-void CYG_SerialUart::openSerialPort(const std::string &_port, const uint8_t _baudrate)
+void CYG_SerialUart::openSerialPort(const std::string& _port, const uint8_t _baudrate)
 {
 	if (serial_port)
 	{
@@ -52,7 +52,7 @@ uint16_t CYG_SerialUart::getPacketLength(uint8_t* _received_buffer)
     return number_of_packet;
 }
 
-void CYG_SerialUart::requestRunMode(const uint8_t _run_mode, std::string &_notice)
+void CYG_SerialUart::requestRunMode(const uint8_t _run_mode, std::string& _notice)
 {
     payload_buffer.clear();
 
@@ -76,7 +76,7 @@ void CYG_SerialUart::requestRunMode(const uint8_t _run_mode, std::string &_notic
     transferPacketCommand(payload_buffer);
 }
 
-void CYG_SerialUart::requestSwitch3DType(const uint8_t _3d_mode, std::string &_notice)
+void CYG_SerialUart::requestSwitch3DType(const uint8_t _3d_mode, std::string& _notice)
 {
     payload_buffer.clear();
     payload_buffer.push_back(D2_Const::SWITCH_3D_DATA_TYPE);
@@ -146,7 +146,7 @@ void CYG_SerialUart::requestSerialBaudRate(const uint8_t _select_baud_rate)
     transferPacketCommand(payload_buffer);
 }
 
-void CYG_SerialUart::requestNewFiltering(const uint8_t _run_mode, const uint8_t _filter_mode, std::string &_notice)
+void CYG_SerialUart::requestNewFiltering(const uint8_t _run_mode, const uint8_t _filter_mode, std::string& _notice)
 {
     if(_run_mode == ROS_Const::MODE_2D)
     {
@@ -226,7 +226,7 @@ void CYG_SerialUart::closeSerialPort()
     transferPacketCommand(payload_buffer);
 }
 
-void CYG_SerialUart::transferPacketCommand(const std::vector<uint8_t> &payload)
+void CYG_SerialUart::transferPacketCommand(const std::vector<uint8_t>& payload)
 {
     uint8_t check_sum = 0;
 

@@ -36,7 +36,7 @@ void CYG_Distortion::initLensTransform(const float _sensor_point_size_mm, const 
 	number_of_columns = _sensor_width;
 	number_of_rows    = _sensor_height;
 
-	int row0 = 1 - (number_of_rows / 2) + _center_point_offset_x;
+	int row0 = 1 - (number_of_rows / 2)    + _center_point_offset_x;
 	int col0 = 1 - (number_of_columns / 2) + _center_point_offset_y;
 
 	for (y = 0, r = row0; y < number_of_rows; r++, y++)

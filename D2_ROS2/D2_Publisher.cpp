@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
         d2_node->disconnectBoostSerial();
     }
-    catch (const rclcpp::exceptions::RCLError &e)
+    catch (const rclcpp::exceptions::RCLError& e)
     {
         RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "[D2 NODE ERROR] : %s", e.what());
     }

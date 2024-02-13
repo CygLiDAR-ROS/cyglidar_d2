@@ -126,7 +126,7 @@ void Topic3D::updateColorConfig(uint8_t _color_mode, std::string& _notice)
 void Topic3D::checkAmplitudeStatus(bool _enable_clahe, uint8_t clip_limit, uint8_t tiles_grid_size, uint8_t* _amplitude_data)
 {
 	enable_clahe = _enable_clahe;
-	// cyg_opencv->initAmplitudeMatrix(_amplitude_data);
+
 	for (uint16_t i = 0; i < D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT; i++)
     {
         cyg_opencv->matrix_raw_amplitude.at<uint8_t>(0, i) = _amplitude_data[i];
