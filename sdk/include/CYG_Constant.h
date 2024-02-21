@@ -58,7 +58,7 @@ namespace D2_Const
 	const float ANGLE_INCREMENT_2D = 0.75f;		// unit : degree
 
 	//---> 3D Depth Code
-	const uint16_t DISTANCE_MAX_VALUE_3D = 3000;	// unit : mm
+	const uint16_t DISTANCE_MAX_VALUE_3D = 4000;	// unit : mm
 
 	const uint16_t INVALID_DATA_3D  = 4080;
 	const uint16_t LOW_AMPLITUDE_3D = 4081;
