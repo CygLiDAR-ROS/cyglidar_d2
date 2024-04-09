@@ -139,9 +139,6 @@ void D2_Node::requestPacketData()
     serial_port->requestEdgeFiltering(run_mode, edge_filter_value);
     ROS_INFO("[PACKET REQUEST] EDGE FILTERING : %d", edge_filter_value);
 
-    serial_port->requestRunMode(run_mode, mode_notice);
-    ROS_INFO("[PACKET REQUEST] %s", mode_notice.c_str());
-
     serial_port->requestDurationControl(run_mode, duration_mode, duration_value);
     ros::Duration(1.0).sleep();
     ROS_INFO("[PACKET REQUEST] PULSE DURATION : %d", duration_value);
@@ -150,6 +147,8 @@ void D2_Node::requestPacketData()
     serial_port->requestFrequencyChannel(frequency_channel);
     ROS_INFO("[PACKET REQUEST] FREQUENCY CH.%d", frequency_channel);
 
+    serial_port->requestRunMode(run_mode, mode_notice);
+    ROS_INFO("[PACKET REQUEST] %s", mode_notice.c_str());
 }
 
 void D2_Node::convertData(received_data_buffer* _received_buffer)
