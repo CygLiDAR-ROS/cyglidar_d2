@@ -138,9 +138,6 @@ void D2_Node::requestPacketData()
     serial_port->requestEdgeFiltering(run_mode, edge_filter_value);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] EDGE FILTERING : %d", edge_filter_value);
 
-    serial_port->requestRunMode(run_mode, mode_notice);
-    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
-
     serial_port->requestDurationControl(run_mode, duration_mode, duration_value);
     std::this_thread::sleep_for(1s);
     // sleep for a sec, by the duration
@@ -149,6 +146,8 @@ void D2_Node::requestPacketData()
     serial_port->requestFrequencyChannel(frequency_channel);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] FREQUENCY CH.%d", frequency_channel);
 
+    serial_port->requestRunMode(run_mode, mode_notice);
+    RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
 }
 
 void D2_Node::convertData(received_data_buffer* _received_buffer)
