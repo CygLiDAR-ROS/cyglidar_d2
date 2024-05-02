@@ -137,6 +137,7 @@ void D2_Node::requestPacketData()
     ROS_INFO("[PACKET REQUEST] %s", mode_notice.c_str());
 
     serial_port->requestEdgeFiltering(run_mode, edge_filter_value);
+    ros::Duration(1.0).sleep();
     ROS_INFO("[PACKET REQUEST] EDGE FILTERING : %d", edge_filter_value);
 
     serial_port->requestDurationControl(run_mode, duration_mode, duration_value);
