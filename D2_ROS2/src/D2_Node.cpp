@@ -136,6 +136,7 @@ void D2_Node::requestPacketData()
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
 
     serial_port->requestEdgeFiltering(run_mode, edge_filter_value);
+    std::this_thread::sleep_for(1s);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] EDGE FILTERING : %d", edge_filter_value);
 
     serial_port->requestDurationControl(run_mode, duration_mode, duration_value);
