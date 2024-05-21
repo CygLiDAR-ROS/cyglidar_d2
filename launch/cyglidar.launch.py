@@ -10,7 +10,7 @@ def generate_launch_description():
         description = "baud rate value [0:(3,000,000), 1:(921,600), 2:(115,200), 3:(57,600)]")
 
     run_mode_arg = DeclareLaunchArgument(
-        "run_mode", default_value = TextSubstitution(text="1"),
+        "run_mode", default_value = TextSubstitution(text="2"),
         description = "version type [0(2D), 1(3D), 2(2D/3D)]")
 
     frequency_channel_arg = DeclareLaunchArgument(
