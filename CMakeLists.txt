@@ -14,7 +14,7 @@ set(CYGLIDAR_SDK_PATH "./sdk/")
 FILE(GLOB CYGLIDAR_SDK_SRC
     "${CYGLIDAR_SDK_PATH}/src/*.cpp")
 
-set(CYGLIDAR_ROS_PATH "./D2_ROS2/")
+set(CYGLIDAR_ROS_PATH "./d2_ros2/")
 FILE(GLOB CYGLIDAR_ROS_SRC
     "${CYGLIDAR_ROS_PATH}/src/*.cpp")
 
@@ -36,7 +36,7 @@ include_directories(
 link_directories(${PCL_LIBRARY_DIRS})
 
 add_executable(cyglidar_d2_publisher
-    ${CYGLIDAR_ROS_PATH}/D2_Publisher.cpp
+    ${CYGLIDAR_ROS_PATH}/main.cpp
     ${CYGLIDAR_ROS_SRC}
     ${CYGLIDAR_SDK_SRC})
 

@@ -3,20 +3,21 @@
 #include <chrono>
 #include <rclcpp/rclcpp.hpp>
 
-#include "CYG_SerialUart.h"
-#include "CYG_Driver.h"
-#include "CYG_Constant.h"
-#include "CYG_Distortion.h"
-#include "Topic2D.h"
-#include "Topic3D.h"
+#include "cygbot_constant.h"
+#include "cygbot_parser.h"
+#include "distance_processor.h"
+#include "serial_uart.h"
+#include "distortion_table.h"
+#include "lidar_2d_topic.h"
+#include "lidar_3d_topic.h"
 
 using namespace std::chrono_literals;
 
-class D2_Node : public rclcpp::Node
+class D2Node : public rclcpp::Node
 {
     public:
-        explicit D2_Node();
-        virtual ~D2_Node();
+        explicit D2Node();
+        virtual ~D2Node();
 
         void connectBoostSerial();
         void disconnectBoostSerial();
@@ -38,10 +39,11 @@ class D2_Node : public rclcpp::Node
         void doublebufferThread();
         void publishThread();
 
-        Topic2D*        topic_2d;
-        Topic3D*        topic_3d;
-        CYG_SerialUart* serial_port;
-        CYG_Driver*     cyg_driver;
+        Lidar2dTopic*      topic_2d;
+        Lidar3dTopic*      topic_3d;
+        SerialUart*        serial_uart;
+        DistanceProcessor* distance_processor;
+        CygbotParser*      cygbot_parser;
 
         rclcpp::Time start_time_scan_2d;
         rclcpp::Time start_time_scan_3d;
@@ -70,8 +72,7 @@ class D2_Node : public rclcpp::Node
         std::future_status status;
 
         std::string mode_notice;
-        bool info_flag = false;
-        
+
         uint8_t packet_structure[D2_Const::SCAN_MAX_SIZE];
         uint8_t first_total_packet_data[D2_Const::SCAN_MAX_SIZE];
         uint8_t second_total_packet_data[D2_Const::SCAN_MAX_SIZE];
@@ -82,6 +83,4 @@ class D2_Node : public rclcpp::Node
         uint8_t  publish_done_flag;
         uint8_t  publish_data_state;
         uint8_t  double_buffer_index;
-        uint8_t  parser_return;
-        uint16_t number_of_data;
 };

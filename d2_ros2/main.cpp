@@ -1,10 +1,10 @@
-#include "D2_Node.h"
+#include "d2_node.h"
 
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
 
-    std::shared_ptr<D2_Node> d2_node = std::make_shared<D2_Node>();
+    std::shared_ptr<D2Node> d2_node = std::make_shared<D2Node>();
 
     try
     {

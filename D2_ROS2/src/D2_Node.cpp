@@ -1,17 +1,21 @@
-#include "D2_Node.h"
+#include "d2_node.h"
 
-D2_Node::D2_Node() : Node("D2_NODE")
+D2Node::D2Node() : Node("D2_NODE")
 {
-    topic_2d    = new Topic2D();
-    topic_3d    = new Topic3D();
-    cyg_driver  = new CYG_Driver();
-    serial_port = new CYG_SerialUart();
+    topic_2d           = new Lidar2dTopic();
+    topic_3d           = new Lidar3dTopic();
+    distance_processor = new DistanceProcessor();
+    cygbot_parser      = new CygbotParser();
+    serial_uart        = new SerialUart();
 
-    topic_2d->initPublisher(this->create_publisher<sensor_msgs::msg::LaserScan>  ("scan",    10),
-                            this->create_publisher<sensor_msgs::msg::PointCloud2>("scan_2D", 10));
+    auto qos_2d = rclcpp::QoS(rclcpp::KeepLast(20)).reliable();
+    auto qos_3d = rclcpp::QoS(rclcpp::KeepLast(20)).best_effort();
 
-    topic_3d->initPublisher(this->create_publisher<sensor_msgs::msg::Image>      ("scan_image", 10),
-                            this->create_publisher<sensor_msgs::msg::PointCloud2>("scan_3D",    10));
+    topic_2d->initPublisher(this->create_publisher<sensor_msgs::msg::LaserScan>  ("scan",    qos_2d),
+                            this->create_publisher<sensor_msgs::msg::PointCloud2>("scan_2D", qos_2d));
+
+    topic_3d->initPublisher(this->create_publisher<sensor_msgs::msg::Image>      ("scan_image", qos_3d),
+                            this->create_publisher<sensor_msgs::msg::PointCloud2>("scan_3D",    qos_3d));
 
     received_buffer[0].packet_data = first_total_packet_data;
     received_buffer[1].packet_data = second_total_packet_data;
@@ -20,11 +24,11 @@ D2_Node::D2_Node() : Node("D2_NODE")
 
     future = exit_signal.get_future();
 
-    double_buffer_thread = std::thread(&D2_Node::doublebufferThread, this);
-    publish_thread       = std::thread(&D2_Node::publishThread, this);
+    double_buffer_thread = std::thread(&D2Node::doublebufferThread, this);
+    publish_thread       = std::thread(&D2Node::publishThread, this);
 }
 
-D2_Node::~D2_Node()
+D2Node::~D2Node()
 {
     exit_signal.set_value();
 
@@ -33,20 +37,22 @@ D2_Node::~D2_Node()
 
     delete topic_2d;
     delete topic_3d;
-    delete cyg_driver;
-    delete serial_port;
+    delete distance_processor;
+    delete cygbot_parser;
+    delete serial_uart;
 
-    topic_2d    = nullptr;
-    topic_3d    = nullptr;
-    cyg_driver  = nullptr;
-    serial_port = nullptr;
+    topic_2d           = nullptr;
+    topic_3d           = nullptr;
+    distance_processor = nullptr;
+    cygbot_parser      = nullptr;
+    serial_uart        = nullptr;
 }
 
-void D2_Node::connectBoostSerial()
+void D2Node::connectBoostSerial()
 {
     try
     {
-        serial_port->openSerialPort(port_number, baud_rate_mode);
+        serial_uart->openSerialPort(port_number, baud_rate_mode);
 
         requestPacketData();
     }
@@ -56,19 +62,19 @@ void D2_Node::connectBoostSerial()
     }
 }
 
-void D2_Node::disconnectBoostSerial()
+void D2Node::disconnectBoostSerial()
 {
-    serial_port->closeSerialPort();
+    serial_uart->closeSerialPort();
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] STOP");
 }
 
-void D2_Node::loopCygParser()
+void D2Node::loopCygParser()
 {
-    number_of_data = serial_port->getPacketLength(packet_structure);
+    uint16_t number_of_data = serial_uart->getPacketLength(packet_structure);
 
     for (uint16_t i = 0; i < number_of_data; i++)
     {
-        parser_return = cyg_driver->CygParser(received_buffer[double_buffer_index].packet_data, packet_structure[i]);
+        uint8_t parser_return = cygbot_parser->CygParser(received_buffer[double_buffer_index].packet_data, packet_structure[i]);
 
         if(parser_return == D2_Const::CHECKSUM_PASSED)
         {
@@ -86,7 +92,7 @@ void D2_Node::loopCygParser()
     }
 }
 
-void D2_Node::initConfiguration()
+void D2Node::initConfiguration()
 {
     port_number           = this->declare_parameter("port_number",           "/dev/ttyUSB0");
     baud_rate_mode        = this->declare_parameter("baud_rate",             0);
@@ -112,11 +118,15 @@ void D2_Node::initConfiguration()
     topic_3d->updateColorConfig(color_mode, mode_notice);
 }
 
-void D2_Node::requestPacketData()
+void D2Node::requestPacketData()
 {
-    serial_port->requestDeviceInfo();
+    serial_uart->requestDeviceInfo();
     std::this_thread::sleep_for(3s);
     // sleep for 3s, by requsting the info data.
+
+    serial_uart->requestGetDeviceId();
+    std::this_thread::sleep_for(1s);
+    // sleep for 1s, by requsting the info id.
 
     RCLCPP_INFO(this->get_logger(), "[COLOR MODE] %s", mode_notice.c_str());
 
@@ -129,37 +139,37 @@ void D2_Node::requestPacketData()
         RCLCPP_INFO(this->get_logger(), "[KALMAN FILTER] NONE APPLIED");
     }
 
-    serial_port->requestSwitch3DType(data_type_3d, mode_notice);
+    serial_uart->requestSwitch3DType(data_type_3d, mode_notice);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
 
-    serial_port->requestNewFiltering(run_mode, filter_mode, mode_notice);
+    serial_uart->requestNewFiltering(run_mode, filter_mode, mode_notice);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
 
-    serial_port->requestEdgeFiltering(run_mode, edge_filter_value);
+    serial_uart->requestEdgeFiltering(run_mode, edge_filter_value);
     std::this_thread::sleep_for(1s);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] EDGE FILTERING : %d", edge_filter_value);
 
-    serial_port->requestDurationControl(run_mode, duration_mode, duration_value);
+    serial_uart->requestDurationControl(run_mode, duration_mode, duration_value);
     std::this_thread::sleep_for(1s);
     // sleep for a sec, by the duration
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] PULSE DURATION : %d", duration_value);
 
-    serial_port->requestFrequencyChannel(frequency_channel);
+    serial_uart->requestFrequencyChannel(frequency_channel);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] FREQUENCY CH.%d", frequency_channel);
 
-    serial_port->requestRunMode(run_mode, mode_notice);
+    serial_uart->requestRunMode(run_mode, mode_notice);
     RCLCPP_INFO(this->get_logger(), "[PACKET REQUEST] %s", mode_notice.c_str());
 }
 
-void D2_Node::convertData(received_data_buffer* _received_buffer)
+void D2Node::convertData(received_data_buffer* _received_buffer)
 {
     rclcpp::Duration time_for_scanning(_received_buffer->parsing_end_time - _received_buffer->parsing_start_time);
 
     if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_2D)
     {
-        cyg_driver->getDistanceArray2D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_2d);
+        distance_processor->getDistanceArray2D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_2d);
 
-        rclcpp::Duration timestamp_nanosec_mode_2d(0, cyg_driver->setTimeStamp2D() * 1000);
+        rclcpp::Duration timestamp_nanosec_mode_2d(0, distance_processor->setTimeStamp2D() * 1000);
         rclcpp::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_2d);
 
         start_time_scan_2d = this->now() - timestamp_scan_started;
@@ -168,9 +178,9 @@ void D2_Node::convertData(received_data_buffer* _received_buffer)
     }
     else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_3D)
     {
-        cyg_driver->getDistanceArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, enable_kalmanfilter);
+        distance_processor->getDistanceArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, enable_kalmanfilter);
 
-        rclcpp::Duration timestamp_nanosec_mode_3d(0, cyg_driver->setTimeStamp3D() * 1000);
+        rclcpp::Duration timestamp_nanosec_mode_3d(0, distance_processor->setTimeStamp3D() * 1000);
         rclcpp::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
 
         start_time_scan_3d = this->now() - timestamp_scan_started;
@@ -179,24 +189,27 @@ void D2_Node::convertData(received_data_buffer* _received_buffer)
     }
     else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_AMPLITUDE_3D)
     {
-        cyg_driver->getDistanceAndAmpliutdeArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, amplitude_buffer_3d, enable_kalmanfilter);
+        distance_processor->getDistanceAndAmpliutdeArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, amplitude_buffer_3d, enable_kalmanfilter);
 
-        rclcpp::Duration timestamp_nanosec_mode_3d(0, cyg_driver->setTimeStamp3D() * 1000);
+        rclcpp::Duration timestamp_nanosec_mode_3d(0, distance_processor->setTimeStamp3D() * 1000);
         rclcpp::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
 
         start_time_scan_3d = this->now() - timestamp_scan_started;
 
         publish_data_state = ROS_Const::PUBLISH_3D;
     }
-    else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_DEVICE_INFO && info_flag == false)
+    else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_DEVICE_INFO)
     {
         RCLCPP_INFO(this->get_logger(), "[F/W VERSION] %d.%d.%d", _received_buffer->packet_data[6], _received_buffer->packet_data[7],  _received_buffer->packet_data[8]);
         RCLCPP_INFO(this->get_logger(), "[H/W VERSION] %d.%d.%d", _received_buffer->packet_data[9], _received_buffer->packet_data[10], _received_buffer->packet_data[11]);
-        info_flag = true;
+    }
+    else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_DEVICE_ID)
+    {
+        RCLCPP_INFO(this->get_logger(), "[DEVICE ID] %d", _received_buffer->packet_data[6]);
     }
 }
 
-void D2_Node::processDoubleBuffer()
+void D2Node::processDoubleBuffer()
 {
     if(publish_done_flag & 0x1)
     {
@@ -210,7 +223,7 @@ void D2_Node::processDoubleBuffer()
     }
 }
 
-void D2_Node::runPublish()
+void D2Node::runPublish()
 {
     if (publish_data_state == ROS_Const::PUBLISH_3D)
     {
@@ -239,7 +252,7 @@ void D2_Node::runPublish()
     }
 }
 
-void D2_Node::doublebufferThread()
+void D2Node::doublebufferThread()
 {
     do
     {
@@ -248,7 +261,7 @@ void D2_Node::doublebufferThread()
     } while (status == std::future_status::timeout);
 }
 
-void D2_Node::publishThread()
+void D2Node::publishThread()
 {
     do
     {
