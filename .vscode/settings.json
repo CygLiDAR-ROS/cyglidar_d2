@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "*.repos": "yaml",
-        "*.world": "xml",
-        "*.xacro": "xml",
-        "memory": "cpp",
-        "vector": "cpp"
-    }
-}
