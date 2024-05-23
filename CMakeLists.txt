@@ -14,7 +14,7 @@ FILE(GLOB CYGLIDAR_SDK_SRC
     "${CYGLIDAR_SDK_PATH}/src/*.cpp"
     "${CYGLIDAR_SDK_PATH}/src/*.c")
 
-set(CYGLIDAR_ROS_PATH "./D2_ROS1/")
+set(CYGLIDAR_ROS_PATH "./d2_ros1/")
 FILE(GLOB CYGLIDAR_ROS_SRC
     "${CYGLIDAR_ROS_PATH}/src/*.cpp")
 
@@ -39,7 +39,7 @@ catkin_package()
 link_directories(${PCL_LIBRARY_DIRS})
 
 add_executable(cyglidar_publisher
-    ${CYGLIDAR_ROS_PATH}/D2_Publisher.cpp
+    ${CYGLIDAR_ROS_PATH}/main.cpp
     ${CYGLIDAR_SDK_SRC}
     ${CYGLIDAR_ROS_SRC})
 

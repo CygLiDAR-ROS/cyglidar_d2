@@ -100,6 +100,8 @@ namespace D2_Const
 	const uint8_t SET_BAUDRATE        = 0x12;
 	const uint8_t SET_NEW_FILTERING   = 0x13;
 	const uint8_t SET_EDGE_FILTERING  = 0x14;
+	const uint8_t SET_DEVICE_ID 	  = 0x20;
+	const uint8_t GET_DEVICE_ID  	  = 0x21;
 	const uint8_t COMMAND_DATA        = 0x00;
 
 	//---> Payload header value = 2D / 3D / Sensor Version(F/W, H/W)
@@ -107,6 +109,7 @@ namespace D2_Const
 	const uint8_t PACKET_HEADER_3D           = 0x08;
 	const uint8_t PACKET_HEADER_AMPLITUDE_3D = 0x88;
 	const uint8_t PACKET_HEADER_DEVICE_INFO  = 0x10;
+	const uint8_t PACKET_HEADER_DEVICE_ID	 = 0x21;
 
 	const uint8_t HEADER_START	 = 0;
 	const uint8_t HEADER_DEVICE	 = 1;

@@ -4,18 +4,19 @@
 #include <future>
 #include <ros/ros.h>
 
-#include "CYG_SerialUart.h"
-#include "CYG_Driver.h"
-#include "CYG_Constant.h"
-#include "CYG_Distortion.h"
-#include "Topic2D.h"
-#include "Topic3D.h"
+#include "cygbot_constant.h"
+#include "cygbot_parser.h"
+#include "distance_processor.h"
+#include "serial_uart.h"
+#include "distortion_table.h"
+#include "lidar_2d_topic.h"
+#include "lidar_3d_topic.h"
 
-class D2_Node
+class D2Node
 {
     public:
-        explicit D2_Node();
-        virtual ~D2_Node();
+        explicit D2Node();
+        virtual ~D2Node();
 
         void connectBoostSerial();
         void disconnectBoostSerial();
@@ -37,10 +38,11 @@ class D2_Node
         void doublebufferThread();
         void publishThread();
 
-        Topic2D*        topic_2d;
-        Topic3D*        topic_3d;
-        CYG_SerialUart* serial_port;
-        CYG_Driver*     cyg_driver;
+        Lidar2dTopic*      topic_2d;
+        Lidar3dTopic*      topic_3d;
+        SerialUart*        serial_uart;
+        DistanceProcessor* distance_processor;
+        CygbotParser*      cygbot_parser;
 
         std::string port_number;
         int         baud_rate_mode;
@@ -70,7 +72,6 @@ class D2_Node
         std::future_status status;
 
         std::string mode_notice;
-        bool info_flag = false;
 
         uint8_t packet_structure[D2_Const::SCAN_MAX_SIZE];
         uint8_t first_total_packet_data[D2_Const::SCAN_MAX_SIZE];
@@ -82,6 +83,4 @@ class D2_Node
         uint8_t  publish_done_flag;
         uint8_t  publish_data_state;
         uint8_t  double_buffer_index;
-        uint8_t  parser_return;
-        uint16_t number_of_data;
 };

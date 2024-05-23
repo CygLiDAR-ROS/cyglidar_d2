@@ -4,34 +4,29 @@
 #include <limits>
 #include <cmath>
 
-#include "CYG_Constant.h"
+#include "cygbot_constant.h"
 
-class CYG_Distortion
+class DistortionTable
 {
 	public:
-		void initLensTransform(const float _sensor_point_size_mm, const uint8_t _sensor_width, const uint8_t _sensor_height,
-							   const float _center_point_offset_x, const float _center_point_offset_y);
+		void initLensTransform(const float sensor_point_size_mm, const uint8_t sensor_width, const uint8_t sensor_height,
+							   const float center_point_offset_x, const float center_point_offset_y);
 
-		void transformPixel(uint16_t _buffer_index, uint16_t _source_origin_z,
-							float& _point_position_x, float& _point_position_y, float& _point_position_z);
+		void transformPixel(uint16_t buffer_index, uint16_t source_origin_z,
+							float& point_position_x, float& point_position_y, float& point_position_z);
 
 	private:
 		float interpolate(const float x_in, const float x0, const float y0, const float x1, const float y1);
-		float getAngle(const float _x, const float _y, const float _sensor_point_size_mm);
+		float getAngle(const float x, const float y, const float sensor_point_size_mm);
 
 		float table_x[D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT];
         float table_y[D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT];
         float table_z[D2_Const::IMAGE_WIDTH * D2_Const::IMAGE_HEIGHT];
 
 		int x, y, r, c;
-		int number_of_columns;
-		int number_of_rows;
 
 		float max_check;
 		float angle_grad, angle_rad;
-		float x_over_hypotenuse;
-		float y_over_hypotenuse;
-		float focal_length_over_hypotenuse;
 };
 
 // Distortion Type : F - Tan(Theta)
