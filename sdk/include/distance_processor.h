@@ -17,12 +17,13 @@ const uint16_t PACKET_LENGTH_AMPLITUDE_3D = DATA_LENGTH_3D * 1.5 + DATA_LENGTH_3
 class DistanceProcessor
 {
     public:
-        uint16_t setTimeStamp2D();
-        uint16_t setTimeStamp3D();
-
         void getDistanceArray2D(uint8_t* received_buffer_2d, uint16_t* distance_2d);
         void getDistanceArray3D(uint8_t* received_buffer_3d, uint16_t* distance_3d, bool enable_kalman_filter);
         void getDistanceAndAmpliutdeArray3D(uint8_t* received_buffer_3d, uint16_t* distance_3d, uint8_t* amplitude_3d, bool enable_kalman_filter);
+
+        uint16_t setTimeStamp2D();
+        uint16_t setTimeStamp3D();
+        int16_t  setTemperature(uint8_t run_mode);
 
     private:
 		KalmanFiltering _kalman_filter;

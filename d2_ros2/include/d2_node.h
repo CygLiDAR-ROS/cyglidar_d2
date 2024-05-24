@@ -10,6 +10,7 @@
 #include "distortion_table.h"
 #include "lidar_2d_topic.h"
 #include "lidar_3d_topic.h"
+#include "device_status_topic.h"
 
 using namespace std::chrono_literals;
 
@@ -41,6 +42,7 @@ class D2Node : public rclcpp::Node
 
         Lidar2dTopic*      topic_2d;
         Lidar3dTopic*      topic_3d;
+        DeviceStatusTopic* status_topic;
         SerialUart*        serial_uart;
         DistanceProcessor* distance_processor;
         CygbotParser*      cygbot_parser;
