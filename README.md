@@ -66,10 +66,11 @@ sudo chmod 777 /dev/ttyUSB0
 
 #### CygLiDAR Topic List
 ```bash
-/scan       (LaserScan)
-/scan_2D    (PointCloud XYZRGBA)
-/scan_3D    (PointCloud XYZRGBA)
-/scan_image (Image)
+/scan               (LaserScan)
+/scan_2D            (PointCloud XYZRGBA)
+/scan_3D            (PointCloud XYZRGBA)
+/scan_image         (Image)
+/sensor_temperature (Float32)
 ```
 
 #### Depth Image / Amplitude Image
@@ -106,5 +107,5 @@ From CygLiDAR D2, Provide Amplitude Data as well as Depth Data
 In case of grayscale, CALHE(Contrast Limited Adaptive Histogram Equalization) algorithm can be used to improve image contrast.
 
 ![Raw Amplitude](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Amp_Raw.png) |![CLAHE Applied Ampliutde](https://github.com/CygLiDAR-ROS/cyglidar_d2/blob/main/screenshots/Amp_CLAHE_applied.png)
---- | --- | 
+--- | --- |
 * (Left) Raw Amplitude Image \/ (Right) CLAHE Applied Amplitude Image(clip limit \: 40, tile grid size \: 8)
