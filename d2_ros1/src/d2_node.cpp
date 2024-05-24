@@ -4,6 +4,7 @@ D2Node::D2Node()
 {
     topic_2d           = new Lidar2dTopic();
     topic_3d           = new Lidar3dTopic();
+    status_topic       = new DeviceStatusTopic();
     distance_processor = new DistanceProcessor();
     cygbot_parser      = new CygbotParser();
     serial_uart        = new SerialUart();
@@ -13,6 +14,8 @@ D2Node::D2Node()
 
     topic_3d->initPublisher(nh.advertise<sensor_msgs::Image>      ("scan_image", 10),
                             nh.advertise<sensor_msgs::PointCloud2>("scan_3D",    10));
+
+    status_topic->initPublisher(nh.advertise<std_msgs::Float32>("sensor_temperature", 5));
 
     received_buffer[0].packet_data = first_total_packet_data;
     received_buffer[1].packet_data = second_total_packet_data;
@@ -34,12 +37,14 @@ D2Node::~D2Node()
 
     delete topic_2d;
     delete topic_3d;
+    delete status_topic;
     delete distance_processor;
     delete cygbot_parser;
     delete serial_uart;
 
     topic_2d           = nullptr;
     topic_3d           = nullptr;
+    status_topic       = nullptr;
     distance_processor = nullptr;
     cygbot_parser      = nullptr;
     serial_uart        = nullptr;
@@ -108,6 +113,7 @@ void D2Node::initConfiguration()
     priv_nh.param<int>        ("clahe_cliplimit",       clahe_cliplimit,       40);
     priv_nh.param<int>        ("clahe_tiles_grid_size", clahe_tiles_grid_size, 8);
 
+    status_topic->assignDeviceStatus();
     topic_2d->assignLaserScan(frame_id);
     topic_2d->assignPCL2D(frame_id);
     topic_3d->assignImage(frame_id);
@@ -166,6 +172,7 @@ void D2Node::convertData(received_data_buffer* _received_buffer)
     if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_2D)
     {
         distance_processor->getDistanceArray2D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_2d);
+        status_topic->getTemperature(distance_processor->setTemperature(run_mode));
 
         ros::Duration timestamp_nanosec_mode_2d(0, distance_processor->setTimeStamp2D() * 1000);
         ros::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_2d);
@@ -177,6 +184,7 @@ void D2Node::convertData(received_data_buffer* _received_buffer)
     else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_3D)
     {
         distance_processor->getDistanceArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, enable_kalmanfilter);
+        status_topic->getTemperature(distance_processor->setTemperature(run_mode));
 
         ros::Duration timestamp_nanosec_mode_3d(0, distance_processor->setTimeStamp3D() * 1000);
         ros::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
@@ -188,6 +196,7 @@ void D2Node::convertData(received_data_buffer* _received_buffer)
     else if (_received_buffer->packet_data[D2_Const::PAYLOAD_HEADER] == D2_Const::PACKET_HEADER_AMPLITUDE_3D)
     {
         distance_processor->getDistanceAndAmpliutdeArray3D(&_received_buffer->packet_data[D2_Const::PAYLOAD_INDEX], distance_buffer_3d, amplitude_buffer_3d, enable_kalmanfilter);
+        status_topic->getTemperature(distance_processor->setTemperature(run_mode));
 
         ros::Duration timestamp_nanosec_mode_3d(0, distance_processor->setTimeStamp3D() * 1000);
         ros::Duration timestamp_scan_started(time_for_scanning + timestamp_nanosec_mode_3d);
@@ -238,6 +247,7 @@ void D2Node::runPublish()
             topic_3d->publishAmplitudePointCloud3D(start_time_scan_3d, distance_buffer_3d);
         }
 
+        status_topic->publishDeviceStatus();
         publish_data_state = ROS_Const::PUBLISH_DONE;
     }
     else if (publish_data_state == ROS_Const::PUBLISH_2D)
@@ -246,6 +256,7 @@ void D2Node::runPublish()
         topic_2d->publishPoint2D(start_time_scan_2d);
         topic_2d->publishScanLaser(start_time_scan_2d, distance_buffer_2d);
 
+        status_topic->publishDeviceStatus();
         publish_data_state = ROS_Const::PUBLISH_DONE;
     }
 }
