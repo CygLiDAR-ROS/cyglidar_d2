@@ -9,10 +9,11 @@ int main(int argc, char **argv)
     try
     {
         d2_node->connectBoostSerial();
-
+        rclcpp::Rate rate(1000);
         while(rclcpp::ok())
         {
             d2_node->loopCygParser();
+            rate.sleep();
         }
 
         d2_node->disconnectBoostSerial();
