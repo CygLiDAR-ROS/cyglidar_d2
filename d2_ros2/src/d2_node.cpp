@@ -1,5 +1,6 @@
 #include "d2_node.h"
 
+
 D2Node::D2Node() : Node("D2_NODE")
 {
     topic_2d           = new Lidar2dTopic();
@@ -76,6 +77,7 @@ void D2Node::disconnectBoostSerial()
 void D2Node::loopCygParser()
 {
     uint16_t number_of_data = serial_uart->getPacketLength(packet_structure);
+
 
     for (uint16_t i = 0; i < number_of_data; i++)
     {
@@ -265,18 +267,21 @@ void D2Node::runPublish()
 
 void D2Node::doublebufferThread()
 {
+    rclcpp::Rate rate(100);
     do
     {
         processDoubleBuffer();
-        status = future.wait_for(0s);
-    } while (status == std::future_status::timeout);
+        rate.sleep();
+    } while (1);
 }
+
 
 void D2Node::publishThread()
 {
+    rclcpp::Rate rate(100);
     do
     {
         runPublish();
-        status = future.wait_for(0s);
-    } while (status == std::future_status::timeout);
+        rate.sleep();
+    } while (1);
 }
