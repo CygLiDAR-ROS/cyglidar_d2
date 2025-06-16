@@ -43,8 +43,8 @@ chmod +x create_udev_rules.sh
 
 ### Run cyglidar_d2_publisher and View in the Rviz
 ```bash
-roslaunch cyglidar_d1_ros2 cyglidar.launch.py
-roslaunch cyglidar_d1_ros2 view_cyglidar.launch.py  (Run with Rviz)
+roslaunch cyglidar_d2_ros1 cyglidar.launch
+roslaunch cyglidar_d2_ros1 view_cyglidar.launch  (Run with Rviz)
 ```
 
 #1 When CyglidarNode Error Occured
