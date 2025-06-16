@@ -91,3 +91,23 @@ uint16_t DistanceProcessor::setTimeStamp3D()
 {
     return this->_timestamp_mode_3d;
 }
+
+int16_t DistanceProcessor::setTemperature(uint8_t run_mode)
+{
+    int16_t sensor_temperature;
+
+    if (run_mode == ROS_Const::MODE_2D)
+    {
+        sensor_temperature = _temperature_mode_2d;
+    }
+    else if (run_mode == ROS_Const::MODE_3D)
+    {
+        sensor_temperature = _temperature_mode_3d;
+    }
+    else
+    {
+        sensor_temperature = _temperature_mode_3d;
+    }
+
+    return sensor_temperature;
+}
