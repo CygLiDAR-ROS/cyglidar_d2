@@ -158,11 +158,11 @@ void D2Node::requestPacketData()
     ROS_INFO("[PACKET REQUEST] PULSE DURATION : %d", duration_value);
     // sleep for a sec, by requsting the duration
 
-    serial_uart->requestFrequencyChannel(frequency_channel);
-    ROS_INFO("[PACKET REQUEST] FREQUENCY CH.%d", frequency_channel);
-
     serial_uart->requestRunMode(run_mode, mode_notice);
     ROS_INFO("[PACKET REQUEST] %s", mode_notice.c_str());
+
+    serial_uart->requestFrequencyChannel(frequency_channel);
+    ROS_INFO("[PACKET REQUEST] FREQUENCY CH.%d", frequency_channel);
 }
 
 void D2Node::convertData(received_data_buffer* _received_buffer)
